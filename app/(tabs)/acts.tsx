@@ -1,68 +1,64 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet, 
-  TouchableOpacity,
-  SafeAreaView,
   ScrollView,
-  Image,
-  ImageSourcePropType,
+  Dimensions,
+  Platform,
 } from 'react-native';
-import { arcsData } from '@/data/habitsData';
-import { ChevronRight } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import ArcNode from '@/components/ArcNode';
+import { arcs } from '@/data/progressionData';
+
+const { height } = Dimensions.get('window');
 
 export default function ActsScreen() {
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+  useEffect(() => {
+    // Find the current arc index
+    const currentArcIndex = arcs.findIndex(arc => arc.status === 'current');
+    
+    // Calculate scroll position to center the current arc
+    if (currentArcIndex !== -1) {
+      const scrollPosition = currentArcIndex * 144; // Approximate height of each arc
+      
+      // Add a slight delay to ensure the ScrollView is ready
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({
+          y: scrollPosition,
+          animated: true
+        });
+      }, 500);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>ACTS</Text>
-        <Text style={styles.headerSubtitle}>CHOOSE YOUR PATH</Text>
-      </View>
+      <LinearGradient
+        colors={[
+          'rgba(122, 0, 243, 0.1)',
+          'rgba(15, 15, 15, 1)',
+          'rgba(255, 78, 78, 0.1)',
+        ]}
+        locations={[0, 0.5, 1]}
+        style={StyleSheet.absoluteFill}
+      />
       
-      <ScrollView style={styles.content}>
-        {arcsData.map((arc) => (
-          <TouchableOpacity 
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.spacer} />
+        {arcs.map((arc, index) => (
+          <ArcNode
             key={arc.id}
-            style={styles.actCard}
-          >
-            <View style={styles.imageContainer}>
-              <Image 
-                source={arc.imageUrl as ImageSourcePropType}
-                style={styles.actImage}
-                resizeMode="contain"
-              />
-            </View>
-            
-            <View style={styles.actContent}>
-              <View style={styles.actHeader}>
-                <Text style={styles.actName}>{arc.name}</Text>
-                <ChevronRight color="#FF4E4E" size={20} />
-              </View>
-              
-              <Text style={styles.actDescription}>
-                {arc.description}
-              </Text>
-              
-              <View style={styles.actStats}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>
-                    {arc.days.length}
-                  </Text>
-                  <Text style={styles.statLabel}>DAYS</Text>
-                </View>
-                
-                <View style={styles.divider} />
-                
-                <View style={styles.statItem}>
-                  <Text style={styles.statValue}>
-                    {arc.days[0].habits.length}
-                  </Text>
-                  <Text style={styles.statLabel}>HABITS</Text>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
+            arc={arc}
+            isLast={index === arcs.length - 1}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -74,97 +70,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F0F0F',
   },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#5A5A5A',
-  },
-  headerTitle: {
-    fontFamily: 'Rajdhani-Bold',
-    fontSize: 32,
-    color: '#DCDCDC',
-    letterSpacing: 2,
-  },
-  headerSubtitle: {
-    fontFamily: 'SpaceMono-Regular',
-    fontSize: 14,
-    color: '#FF4E4E',
-    letterSpacing: 1,
-    marginTop: 4,
-  },
-  content: {
+  scrollView: {
     flex: 1,
-    padding: 20,
   },
-  actCard: {
-    backgroundColor: 'rgba(30, 30, 30, 0.8)',
-    borderRadius: 12,
-    marginBottom: 20,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#5A5A5A',
+  scrollContent: {
+    paddingBottom: 40,
   },
-  imageContainer: {
-    width: '100%',
-    height: 160,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  actImage: {
-    width: '100%',
-    height: '100%',
-  },
-  actContent: {
-    padding: 16,
-  },
-  actHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  actName: {
-    fontFamily: 'Rajdhani-Bold',
-    fontSize: 24,
-    color: '#DCDCDC',
-    letterSpacing: 1,
-  },
-  actDescription: {
-    fontFamily: 'SpaceMono-Regular',
-    fontSize: 14,
-    color: '#5A5A5A',
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  actStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#5A5A5A',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  divider: {
-    width: 1,
-    height: 40,
-    backgroundColor: '#5A5A5A',
-  },
-  statValue: {
-    fontFamily: 'Rajdhani-Bold',
-    fontSize: 24,
-    color: '#DCDCDC',
-  },
-  statLabel: {
-    fontFamily: 'SpaceMono-Regular',
-    fontSize: 12,
-    color: '#5A5A5A',
-    letterSpacing: 1,
-    marginTop: 4,
+  spacer: {
+    height: height * 0.4, // Add space at the top to allow scrolling to the last arc
   },
 });
