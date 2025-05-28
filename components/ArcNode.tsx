@@ -59,7 +59,7 @@ export default function ArcNode({ arc, isLast }: ArcNodeProps) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.nodeContainer}>
+        <View style={styles.lineContainer}>
           {!isLast && (
             <LinearGradient
               colors={getLineGradient()}
@@ -129,19 +129,6 @@ export default function ArcNode({ arc, isLast }: ArcNodeProps) {
           </LinearGradient>
         </View>
       </View>
-
-      {arc.isCheckpoint && (
-        <View style={styles.checkpointContainer}>
-          <LinearGradient
-            colors={['rgba(122, 0, 243, 0.2)', 'rgba(255, 78, 78, 0.2)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.checkpointGradient}
-          >
-            <Text style={styles.checkpointText}>CHOOSE YOUR PATH</Text>
-          </LinearGradient>
-        </View>
-      )}
     </View>
   );
 }
@@ -152,12 +139,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
-  nodeContainer: {
+  lineContainer: {
     alignItems: 'center',
-    marginRight: 16,
+    width: 60,
     height: 120,
   },
   nodeOuter: {
@@ -168,6 +155,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(15, 15, 15, 0.8)',
+    zIndex: 2,
   },
   node: {
     width: 16,
@@ -183,8 +171,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 4,
     height: 144,
-    top: 32,
-    zIndex: -1,
+    top: -12,
+    left: 28,
+    zIndex: 1,
     overflow: 'hidden',
   },
   glowLine: {
@@ -230,23 +219,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#DCDCDC',
     opacity: 0.7,
-  },
-  checkpointContainer: {
-    marginTop: 24,
-    marginBottom: 24,
-    paddingHorizontal: 20,
-  },
-  checkpointGradient: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(122, 0, 243, 0.3)',
-  },
-  checkpointText: {
-    fontFamily: 'SpaceMono-Bold',
-    fontSize: 16,
-    color: '#DCDCDC',
-    textAlign: 'center',
-    letterSpacing: 2,
   },
 });

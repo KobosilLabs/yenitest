@@ -46,6 +46,8 @@ export default function ActsScreen() {
         style={StyleSheet.absoluteFill}
       />
       
+      <View style={styles.lineBackground} />
+      
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollView}
@@ -60,6 +62,7 @@ export default function ActsScreen() {
             isLast={index === arcs.length - 1}
           />
         ))}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -70,6 +73,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F0F0F',
   },
+  lineBackground: {
+    position: 'absolute',
+    left: 48,
+    top: 0,
+    bottom: 0,
+    width: 4,
+    backgroundColor: 'rgba(90, 90, 90, 0.2)',
+    zIndex: 0,
+  },
   scrollView: {
     flex: 1,
   },
@@ -77,6 +89,9 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   spacer: {
-    height: height * 0.4, // Add space at the top to allow scrolling to the last arc
+    height: height * 0.4,
+  },
+  bottomSpacer: {
+    height: height * 0.2,
   },
 });
