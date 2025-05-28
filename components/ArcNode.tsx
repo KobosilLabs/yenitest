@@ -46,27 +46,60 @@ export default function ArcNode({ arc, isLast }: ArcNodeProps) {
     outputRange: [1, 1.2],
   });
 
+  const getLineGradient = () => {
+    if (arc.status === 'locked') {
+      return ['#5A5A5A', '#5A5A5A'];
+    } else if (arc.status === 'completed') {
+      return ['#7A00F3', '#7A00F3'];
+    } else {
+      return ['#FF4E4E', '#FF4E4E'];
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.nodeContainer}>
+          {!isLast && (
+            <LinearGradient
+              colors={getLineGradient()}
+              style={styles.line}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+            >
+              <Animated.View 
+                style={[
+                  styles.glowLine,
+                  {
+                    backgroundColor: arc.status === 'current' ? '#FF4E4E' : 
+                                   arc.status === 'completed' ? '#7A00F3' : '#5A5A5A',
+                    opacity: arc.status === 'current' ? pulseAnim : 0.5
+                  }
+                ]}
+              />
+            </LinearGradient>
+          )}
+          
           <Animated.View
             style={[
-              styles.node,
+              styles.nodeOuter,
               {
                 transform: [{ scale: arc.status === 'current' ? nodeScale : 1 }],
-                backgroundColor: arc.status === 'current' ? '#FF4E4E' : 
-                               arc.status === 'completed' ? '#7A00F3' : '#5A5A5A'
+                borderColor: arc.status === 'current' ? '#FF4E4E' : 
+                           arc.status === 'completed' ? '#7A00F3' : '#5A5A5A'
               },
             ]}
-          />
-          {!isLast && <View style={[
-            styles.line,
-            { 
-              backgroundColor: arc.status === 'locked' ? '#5A5A5A' : 
-                             arc.status === 'completed' ? '#7A00F3' : '#FF4E4E'
-            }
-          ]} />}
+          >
+            <Animated.View
+              style={[
+                styles.node,
+                {
+                  backgroundColor: arc.status === 'current' ? '#FF4E4E' : 
+                                 arc.status === 'completed' ? '#7A00F3' : '#5A5A5A'
+                },
+              ]}
+            />
+          </Animated.View>
         </View>
 
         <View style={[
@@ -119,17 +152,27 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: 20,
   },
   nodeContainer: {
     alignItems: 'center',
     marginRight: 16,
+    height: 120,
+  },
+  nodeOuter: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(15, 15, 15, 0.8)',
   },
   node: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     shadowColor: '#FF4E4E',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -137,9 +180,18 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   line: {
-    width: 2,
-    height: 100,
-    marginTop: 8,
+    position: 'absolute',
+    width: 4,
+    height: 144,
+    top: 32,
+    zIndex: -1,
+    overflow: 'hidden',
+  },
+  glowLine: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    opacity: 0.5,
   },
   arcContainer: {
     flex: 1,
