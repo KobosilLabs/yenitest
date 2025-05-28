@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Arc } from '@/data/progressionData';
 
@@ -59,6 +59,24 @@ export default function ArcNode({ arc, isLast }: ArcNodeProps) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
+        <View style={styles.arcContainer}>
+          <LinearGradient
+            colors={getColors()}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[
+              styles.gradient,
+              { borderColor: arc.status === 'current' ? '#FF4E4E' : 
+                           arc.status === 'completed' ? '#7A00F3' : '#5A5A5A' }
+            ]}
+          >
+            <View style={styles.textContainer}>
+              <Text style={styles.name}>{arc.name}</Text>
+              <Text style={styles.description}>{arc.description}</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
         <View style={styles.lineContainer}>
           {!isLast && (
             <LinearGradient
@@ -101,33 +119,6 @@ export default function ArcNode({ arc, isLast }: ArcNodeProps) {
             />
           </Animated.View>
         </View>
-
-        <View style={[
-          styles.arcContainer,
-          {
-            borderColor: arc.status === 'current' ? '#FF4E4E' : 
-                        arc.status === 'completed' ? '#7A00F3' : '#5A5A5A'
-          }
-        ]}>
-          <LinearGradient
-            colors={getColors()}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradient}
-          >
-            <Image 
-              source={{ uri: arc.imageUrl }}
-              style={styles.backgroundImage}
-              resizeMode="cover"
-            />
-            <View style={styles.overlay} />
-            
-            <View style={styles.textContainer}>
-              <Text style={styles.name}>{arc.name}</Text>
-              <Text style={styles.description}>{arc.description}</Text>
-            </View>
-          </LinearGradient>
-        </View>
       </View>
     </View>
   );
@@ -141,6 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
+    justifyContent: 'center',
   },
   lineContainer: {
     alignItems: 'center',
@@ -184,8 +176,8 @@ const styles = StyleSheet.create({
   },
   arcContainer: {
     flex: 1,
+    maxWidth: '45%',
     borderRadius: 12,
-    borderWidth: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -194,15 +186,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   gradient: {
-    height: 120,
-  },
-  backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.3,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 15, 15, 0.6)',
+    borderRadius: 12,
+    borderWidth: 1,
   },
   textContainer: {
     padding: 16,

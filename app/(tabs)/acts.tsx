@@ -75,7 +75,8 @@ const styles = StyleSheet.create({
   },
   lineBackground: {
     position: 'absolute',
-    left: 48,
+    left: '50%',
+    marginLeft: -2,
     top: 0,
     bottom: 0,
     width: 4,
